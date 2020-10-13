@@ -1,10 +1,8 @@
 class TreinamentoAvaliacao:
   import sys
   import numpy as np
-  #from TreinamentoAvaliacao import TreinamentoAvaliacao
 
   def ler_dataset(self, arquivo_dataset):
-    #f = open("dataset_termos_combinados_coseno_0.5binario.txt", "r")
     f = open(arquivo_dataset, "r")
     dataset_array=[]
     label_array=[]
@@ -31,7 +29,6 @@ class TreinamentoAvaliacao:
     clf = MLPClassifier(activation='logistic', solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(100, 50), random_state=1, max_iter=300)
     clf.fit(dataset_array, label_array)
     return clf.predict(data_teste)
-    #clf.score(dataset_array, [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1])
 
   def svm(self, dataset_array, label_array, data_teste):
     from sklearn import svm
@@ -96,20 +93,10 @@ class TreinamentoAvaliacao:
        data_teste, label_teste = ta.ler_dataset(arquivo_datateste)
 
        resultado_predicao=[]
-       if metodo_predicao == "tree":
-          resultado_predicao = ta.tree(dataset_array,label_array,data_teste)
-       elif metodo_predicao == "naivebayes":
-          resultado_predicao = ta.naivebayes(dataset_array,label_array,data_teste)
-       elif metodo_predicao == "bnaivebayes":
-          resultado_predicao = ta.bnaivebayes(dataset_array,label_array,data_teste)
-       elif metodo_predicao == "mlp":
+       if metodo_predicao == "mlp":
           resultado_predicao = ta.mlp(dataset_array,label_array,data_teste)
        elif metodo_predicao == "svm":
           resultado_predicao = ta.svm(dataset_array,label_array,data_teste)
-       elif metodo_predicao == "nusvm":
-          resultado_predicao = ta.nusvm(dataset_array,label_array,data_teste)
-       elif metodo_predicao == "knn":
-          resultado_predicao = ta.knn(dataset_array,label_array,data_teste)
        elif metodo_predicao == "rf":
           resultado_predicao = ta.rf(dataset_array,label_array,data_teste)
        elif metodo_predicao == "gbc":
@@ -124,7 +111,7 @@ class TreinamentoAvaliacao:
        if resultado_predicao == []:
          print("***************************************")
          print("  Erro:")
-         print("       Nome método de predição errado. Passar o tipo correto: [tree, naivebayes, mlp, svm]")
+         print("       Nome método de predição errado. Passar o tipo correto: [mlp, svm, rf, gbc, abc, gpc]")
          print("***************************************")
        else:
          acuracia = ta.avaliar_acuracia(resultado_predicao,label_teste)
