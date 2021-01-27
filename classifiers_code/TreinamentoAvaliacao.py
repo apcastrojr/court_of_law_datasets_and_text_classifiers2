@@ -22,6 +22,37 @@ class TreinamentoAvaliacao:
     #print(label_array)
     return dataset_array,label_array
 
+  def tree(self, dataset_array, label_array, data_teste):
+    from sklearn import tree
+
+    clf = tree.DecisionTreeClassifier(max_depth=300)
+    clf.fit(dataset_array, label_array)
+    return clf.predict(data_teste)
+
+  def naivebayes(self, dataset_array, label_array, data_teste):
+    from sklearn.naive_bayes import GaussianNB
+
+    #Create a Gaussian Classifier
+    clf = GaussianNB()
+    clf.fit(dataset_array, label_array)
+    return clf.predict(data_teste)
+
+  def bnaivebayes(self, dataset_array, label_array, data_teste):
+    from sklearn.naive_bayes import BernoulliNB
+
+    #Create a Gaussian Classifier
+    clf = BernoulliNB()
+    clf.fit(dataset_array, label_array)
+    return clf.predict(data_teste)
+
+  def knn(self, dataset_array, label_array, data_teste):
+    from sklearn.neighbors import KNeighborsClassifier
+
+    #analise 2 resultados
+    clf = KNeighborsClassifier(n_neighbors=3)
+    clf.fit(dataset_array, label_array)
+    return clf.predict(data_teste)
+
   def mlp(self, dataset_array, label_array, data_teste):
     from sklearn.neural_network import MLPClassifier
 
@@ -74,11 +105,30 @@ class TreinamentoAvaliacao:
       cont+=1
     return (acuracia / cont) * 100
 
+  def avaliar_fmeasure(self, array_predicao, array_label_corretos):
+    from sklearn.metrics import f1_score
+
+    macro = f1_score(array_label_corretos,array_predicao, average='macro')
+    micro = f1_score(array_label_corretos,array_predicao, average='micro')
+    weighted = f1_score(array_label_corretos,array_predicao, average='weighted')
+
+    return weighted
+
+  def avaliar_all(self, array_predicao, array_label_corretos):
+    from sklearn.metrics import precision_recall_fscore_support
+
+    return precision_recall_fscore_support(array_label_corretos, array_predicao, average='weighted')
+
+  def accuracy(self,array_predicao, array_label_corretos):
+    from sklearn.metrics import accuracy_score
+
+    return accuracy_score(array_label_corretos, array_predicao)
+
   if __name__ == '__main__':
     if len(sys.argv) != 4:
        print("Erro na passagem dos argumentos")
        print("Correto:")
-       print("        python3 <nome_arquivo_dataset> <nome_arquivo_teste> <nome_metodo_predicao [mlp, svm, rf, gbc, abc, gpc]>")
+       print("        python3 <nome_arquivo_dataset> <nome_arquivo_teste> <nome_metodo_predicao [mlp, svm, rf, gbc, abc, gpc, tree, nb, bnb, knn]>")
     else:
        #constantes
        arquivo_dataset  =sys.argv[1]
@@ -86,7 +136,8 @@ class TreinamentoAvaliacao:
        metodo_predicao  =sys.argv[3]
        from TreinamentoAvaliacao import TreinamentoAvaliacao
 
-       print(metodo_predicao)
+       print("***************************************")
+       print("Classifier: {}".format(metodo_predicao))	
 
        ta = TreinamentoAvaliacao()
        dataset_array, label_array = ta.ler_dataset(arquivo_dataset)
@@ -105,6 +156,14 @@ class TreinamentoAvaliacao:
           resultado_predicao = ta.abc(dataset_array,label_array,data_teste)
        elif metodo_predicao == "gpc":
           resultado_predicao = ta.gpc(dataset_array,label_array,data_teste)
+       elif metodo_predicao == "tree":
+          resultado_predicao = ta.tree(dataset_array,label_array,data_teste)
+       elif metodo_predicao == "nb":
+          resultado_predicao = ta.naivebayes(dataset_array,label_array,data_teste)
+       elif metodo_predicao == "bnb":
+          resultado_predicao = ta.bnaivebayes(dataset_array,label_array,data_teste)
+       elif metodo_predicao == "knn":
+          resultado_predicao = ta.knn(dataset_array,label_array,data_teste)
 
 
 
@@ -116,7 +175,16 @@ class TreinamentoAvaliacao:
        else:
          acuracia = ta.avaliar_acuracia(resultado_predicao,label_teste)
          print("***************************************")
-         print(acuracia)
+         print("Accuracy: {}".format(round(acuracia,2)))
          #print(resultado_predicao)
          #print(resultado_datateste)
+         print("***************************************")
+         fmeasure = ta.avaliar_fmeasure(resultado_predicao,label_teste)
+         print("F-measure: {}".format(round(fmeasure,2)))
+         print("***************************************")
+         all = ta.avaliar_all(resultado_predicao,label_teste)
+         print("Precision, recall, F-measure: {}".format(all))
+         print("***************************************")
+         accuracy = ta.accuracy(resultado_predicao,label_teste)
+         print("Accuracy: {}".format(round(accuracy,2)))
          print("***************************************")
