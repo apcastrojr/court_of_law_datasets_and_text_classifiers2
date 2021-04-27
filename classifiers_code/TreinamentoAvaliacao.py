@@ -186,5 +186,6 @@ class TreinamentoAvaliacao:
          print("Precision, recall, F-measure: {}".format(all))
          print("***************************************")
          accuracy = ta.accuracy(resultado_predicao,label_teste)
-         print("Accuracy: {}".format(round(accuracy,2)))
+         print("Accuracy: {}".format(round(accuracy,6)))
+         print("Accuracy: {}".format(round(ta.accuracy(resultado_predicao,label_teste),6)))
          print("***************************************")
